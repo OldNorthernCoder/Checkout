@@ -1,8 +1,9 @@
-﻿using System;
-
-namespace Pricing
+﻿namespace Pricing
 {
     public interface ICheckout
     {
+        void Scan(string item);
+        
+        int GetTotalPrice();
     }
 }
