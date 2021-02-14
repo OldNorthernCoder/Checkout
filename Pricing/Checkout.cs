@@ -15,11 +15,11 @@ namespace Pricing
             _prices = prices;
         }
         
-        public void Scan(string item) => GetBasketItem(item.ThrowIfNull()).IncrementQuantity();
+        public void Scan(string item) => GetOrCreateBasketItem(item.ThrowIfNull()).IncrementQuantity();
 
         public int GetTotalPrice() => _basket.Values.Sum(b => b.TotalPrice());
 
-        private BasketItem GetBasketItem(string item)
+        private BasketItem GetOrCreateBasketItem(string item)
         {
             if (!_basket.ContainsKey(item)) 
             {

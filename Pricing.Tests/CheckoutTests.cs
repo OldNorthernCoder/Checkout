@@ -130,6 +130,12 @@ namespace Pricing.Tests
             repository.Verify(r => r.GetPrice(It.IsAny<string>()), Times.Exactly(2));
         }
 
+        [Test]
+        public void VerifyEmptyBasketTotalPriceIsSupported()
+        {
+            Assert.That(_checkout.GetTotalPrice(), Is.EqualTo(0));
+        }
+
         private void ScanQuantityOfItem(string item, int quantityPurchased)
         {
             for (int i = 0; i < quantityPurchased; i++)
