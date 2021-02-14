@@ -15,18 +15,18 @@ namespace Pricing
             _prices = prices;
         }
         
-        public void Scan(string item) => AddOne(_prices.GetPrice(item.ThrowIfNull()));
-
-        private void AddOne(Price price) 
-        {
-            if (!_basket.ContainsKey(price.Sku)) 
-            {
-                _basket.Add(price.Sku, new BasketItem(price));
-            }
-            
-            _basket[price.Sku].IncrementQuantity();            
-        }
+        public void Scan(string item) => GetBasketItem(item.ThrowIfNull()).IncrementQuantity();
 
         public int GetTotalPrice() => _basket.Values.Sum(b => b.TotalPrice());
+
+        private BasketItem GetBasketItem(string item)
+        {
+            if (!_basket.ContainsKey(item)) 
+            {
+                _basket.Add(item, new BasketItem(_prices.GetPrice(item)));
+            }
+            
+            return _basket[item];            
+        }
     }
 }

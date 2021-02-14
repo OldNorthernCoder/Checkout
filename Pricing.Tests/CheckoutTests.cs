@@ -1,5 +1,8 @@
 using System;
+using Moq;
 using NUnit.Framework;
+using Pricing.Data;
+using Pricing.Models;
 
 namespace Pricing.Tests
 {
@@ -107,6 +110,24 @@ namespace Pricing.Tests
             ScanQuantityOfItem("C", quantityC);
             ScanQuantityOfItem("D", quantityD);
             Assert.That(_checkout.GetTotalPrice(), Is.EqualTo(expectedPrice));
+        }
+
+        [Test]
+        public void VerifyRepositoryIsCalledOnlyWhenNewItemIsRequired()
+        {
+            var repository = new Mock<IRepository>();
+            repository.Setup(r => r.GetPrice(It.IsAny<string>())).Returns(new Price("Z", 200));
+            var checkout = new Checkout(new Prices(repository.Object));
+
+            checkout.Scan("A");
+            repository.Verify(r => r.GetPrice("A"), Times.Once());
+
+            checkout.Scan("A");
+            repository.Verify(r => r.GetPrice("A"), Times.Once());
+
+            checkout.Scan("B");
+            repository.Verify(r => r.GetPrice("B"), Times.Once());
+            repository.Verify(r => r.GetPrice(It.IsAny<string>()), Times.Exactly(2));
         }
 
         private void ScanQuantityOfItem(string item, int quantityPurchased)
