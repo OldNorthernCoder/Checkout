@@ -1,3 +1,5 @@
+using System;
+
 namespace Pricing.Models
 {
     internal class Price
@@ -19,6 +21,12 @@ namespace Pricing.Models
 
         public string Sku { get; }
         
-        internal int TotalPrice(int quantity) => quantity * _unitPrice;
+        internal int TotalPrice(int quantity) => (_multiBuyPrice == null) ? quantity * _unitPrice : CalculateMultiBuyPrice(quantity);
+
+        private int CalculateMultiBuyPrice(int quantity)
+        {
+            var multibuys = Math.DivRem(quantity, _multiBuyPrice.Quantity, out int remainder);
+            return (multibuys * _multiBuyPrice.Price) + (remainder * _unitPrice);
+        }  
     }
 }
