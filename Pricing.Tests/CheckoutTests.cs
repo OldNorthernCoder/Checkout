@@ -68,5 +68,53 @@ namespace Pricing.Tests
             }
             Assert.That(_checkout.GetTotalPrice(), Is.EqualTo(expectedPrice));
         }
+       
+        [TestCase("A", 0, 0)]
+        [TestCase("A", 2, 100)]
+        [TestCase("A", 3, 130)]
+        [TestCase("A", 6, 260)]
+        [TestCase("A", 7, 310)]
+        [TestCase("A", 8, 360)]
+        [TestCase("A", 9, 390)]
+        [TestCase("B", 0, 0)]
+        [TestCase("B", 1, 30)]
+        [TestCase("B", 2, 45)]
+        [TestCase("B", 4, 90)]
+        [TestCase("B", 7, 165)]
+        [TestCase("B", 8, 180)]
+        [TestCase("C", 0, 0)]
+        [TestCase("C", 2, 40)]
+        [TestCase("C", 4, 80)]
+        [TestCase("C", 7, 140)]
+        [TestCase("D", 0, 0)]
+        [TestCase("D", 2, 30)]
+        [TestCase("D", 4, 60)]
+        [TestCase("D", 9, 135)]
+        public void CalculateActualPriceSingleItems(string item, int quantityPurchased, int expectedPrice)
+        {
+            ScanQuantityOfItem(item, quantityPurchased);
+            Assert.That(_checkout.GetTotalPrice(), Is.EqualTo(expectedPrice));
+        }
+
+        [TestCase(6, 4, 1, 1, 385)]
+        [TestCase(7, 4, 1, 1, 435)]
+        [TestCase(7, 3, 1, 0, 405)]
+        [TestCase(3, 2, 2, 4, 275)]
+        public void CalculateActualCombinationOfItems(int quantityA, int quantityB, int quantityC, int quantityD, int expectedPrice)
+        {
+            ScanQuantityOfItem("A", quantityA);
+            ScanQuantityOfItem("B", quantityB);
+            ScanQuantityOfItem("C", quantityC);
+            ScanQuantityOfItem("D", quantityD);
+            Assert.That(_checkout.GetTotalPrice(), Is.EqualTo(expectedPrice));
+        }
+
+        private void ScanQuantityOfItem(string item, int quantityPurchased)
+        {
+            for (int i = 0; i < quantityPurchased; i++)
+            {
+                _checkout.Scan(item);
+            }
+        } 
     }
 }
